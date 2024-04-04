@@ -1,0 +1,46 @@
+#A identação faz diferença nesse tipo de arquivo
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres:16.2-alpine3.19
+    container_name: db-pass-in
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=passin~
+    volumes:
+      - "db:/var/lib/postgresql/data"
+
+    #informando a rede que ele está, pode estar em varias caso seja necessário
+    networks:
+      - passin
+
+  api-pass-in:
+    build:
+      # Caso o Dockerfile não estivesse na mesma pasta teria que navegar
+      context: .
+    container_name: api-pass-in
+    ports:
+      - 5005:3333
+    environment:
+      #como esta rodando as duas aplicações em containers na mesma rede o localhost não existe
+      #só existe o api-pass-in e o postgres, por isso tem que passar postgres
+      - DATABASE_URL=postgresql://admin:admin@postgres:5432/passin
+      - API_BASE_URL=http://localhost:3333
+    depends_on:
+      - postgres
+    networks:
+      - passin
+
+#criação da rede
+networks:
+  passin:
+    driver: bridge
+
+volumes:
+  db:
+# Para rodar
+# docker-compose up --build -d (caso não queria buildar não passa o build)
