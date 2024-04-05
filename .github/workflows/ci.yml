@@ -1,40 +1,28 @@
-
-
 name: CI
-
-
 
 on:
   push:
     branches:
       - main
 
-
 jobs:
   build-and-push:
-    name: 'Build and Push'
+    name: "Build and Push"
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-# Isso aqui serve para associar o hash do commit no docker hub
-    - name: Generate sha
-      id: generate_sha
-      run: |
-#pega os 7 primeiros caracteres do hash do commit
-        SHA=$(echo $GITHUB_SHA | head -c7)
-# Variáveis que começam com GITHUB_ são do proprio github
-        echo "sha=$SHA" >> $GITHUB_OUTPUT
+        # Isso aqui serve para associar o hash do commit no docker hub
+      - name: Generate sha
+        id: generate_sha
+        # pega os 7 primeiros caracteres do hash do commit
+        run: |
+          SHA=$(echo $GITHUB_SHA | head -c7)
+          # Variáveis que começam com GITHUB_ são do proprio github
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
 
-
-    - name: Build docker image
-# Se o dockerfile não estiver na raiz ou não tiver o nome docker file no lugar do . tem que navegar até o arquivo
-      run: docker build -t caiomm/nlw.service.passin:${{ steps.generate_sha.outputs.sha }} .
-
-
-
-
-
-
+      - name: Build docker image
+        # Se o dockerfile não estiver na raiz ou não tiver o nome docker file no lugar do . tem que navegar até o arquivo
+        run: docker build -t caiomm/nlw.service.passin:${{ steps.generate_sha.outputs.sha }} .
