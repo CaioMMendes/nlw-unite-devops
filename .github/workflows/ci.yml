@@ -36,3 +36,5 @@ jobs:
       - name: Push image
         run: |
           docker push caiomm/nlw.service.passin:${{ steps.generate_sha.outputs.sha }}
+          docker tag caiomm/nlw.service.passin:${{ steps.generate_sha.outputs.sha }} caiomm/nlw.service.passin:latest
+          docker push caiomm/nlw.service.passin:latest
